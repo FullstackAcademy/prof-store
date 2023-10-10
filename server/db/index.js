@@ -4,7 +4,8 @@ const path = require('path');
 
 const {
   fetchProducts,
-  createProduct
+  createProduct,
+  updateProduct
 } = require('./products');
 
 const {
@@ -86,12 +87,14 @@ const seed = async()=> {
   ]);
   const fooImage = await loadImage('images/foo.png');
   const barImage = await loadImage('images/bar.png');
-  const [foo, bar, bazz] = await Promise.all([
+  const bazzImage = await loadImage('images/bazz.png');
+  let [foo, bar, bazz] = await Promise.all([
     createProduct({ name: 'foo', image: fooImage}),
     createProduct({ name: 'bar', image: barImage}),
     createProduct({ name: 'bazz' }),
     createProduct({ name: 'quq' }),
   ]);
+  bazz = await updateProduct({...bazz, image: bazzImage});
   let orders = await fetchOrders(ethyl.id);
   let cart = orders.find(order => order.is_cart);
   let lineItem = await createLineItem({ order_id: cart.id, product_id: foo.id});
@@ -110,6 +113,7 @@ module.exports = {
   updateLineItem,
   deleteLineItem,
   updateOrder,
+  updateProduct,
   authenticate,
   findUserByToken,
   seed,
