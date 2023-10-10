@@ -10,3 +10,6 @@ form {
 form > * {
   margin: 0.5rem;
 }
+#productList img {
+  display: block;
+}

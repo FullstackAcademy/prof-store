@@ -1,4 +1,6 @@
 const client = require('./client');
+const fs = require('fs');
+const path = require('path');
 
 const {
   fetchProducts,
@@ -20,6 +22,21 @@ const {
   fetchOrders
 } = require('./cart');
 
+const loadImage = (filePath)=> {
+  return new Promise((resolve, reject)=> {
+    const fullPath = path.join(__dirname, filePath);
+    fs.readFile(fullPath, 'base64', (err, result)=> {
+      if(err){
+        reject(err);
+      }
+      else {
+        //data:[<mediatype>][;base64],<data>
+        resolve(`data:image/png;base64,${result}`);
+      }
+    });
+  });
+};
+
 
 const seed = async()=> {
   const SQL = `
@@ -39,7 +56,8 @@ const seed = async()=> {
     CREATE TABLE products(
       id UUID PRIMARY KEY,
       created_at TIMESTAMP DEFAULT now(),
-      name VARCHAR(100) UNIQUE NOT NULL
+      name VARCHAR(100) UNIQUE NOT NULL,
+      image TEXT
     );
 
     CREATE TABLE orders(
@@ -66,9 +84,11 @@ const seed = async()=> {
     createUser({ username: 'lucy', password: 'l_password', is_admin: false}),
     createUser({ username: 'ethyl', password: '1234', is_admin: true})
   ]);
+  const fooImage = await loadImage('images/foo.png');
+  const barImage = await loadImage('images/bar.png');
   const [foo, bar, bazz] = await Promise.all([
-    createProduct({ name: 'foo' }),
-    createProduct({ name: 'bar' }),
+    createProduct({ name: 'foo', image: fooImage}),
+    createProduct({ name: 'bar', image: barImage}),
     createProduct({ name: 'bazz' }),
     createProduct({ name: 'quq' }),
   ]);
