@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Link, HashRouter, Routes, Route } from 'react-router-dom';
 import Products from './Products';
@@ -12,6 +12,7 @@ const App = ()=> {
   const [orders, setOrders] = useState([]);
   const [lineItems, setLineItems] = useState([]);
   const [auth, setAuth] = useState({});
+  const el = useRef();
 
   const attemptLoginWithToken = async()=> {
     await api.attemptLoginWithToken(setAuth);
@@ -45,6 +46,14 @@ const App = ()=> {
       fetchData();
     }
   }, [auth]);
+
+  useEffect(()=> {
+    const map = new google.maps.Map(el.current, {
+      center: { lat: 40.749933, lng: -73.98633 },
+      zoom: 13,
+      mapTypeControl: false,
+    });
+  }, []);
 
 
   const createLineItem = async(product)=> {
@@ -85,6 +94,7 @@ const App = ()=> {
 
   return (
     <div>
+      <div ref={ el } style={{ height: '300px'}}/>
       {
         auth.id ? (
           <>
