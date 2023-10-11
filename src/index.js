@@ -98,38 +98,78 @@ const App = ()=> {
               </span>
             </nav>
             <main>
-              <Products
-                auth = { auth }
-                products={ products }
-                cartItems = { cartItems }
-                createLineItem = { createLineItem }
-                updateLineItem = { updateLineItem }
-                updateProduct = { updateProduct }
-              />
-              <Cart
-                cart = { cart }
-                lineItems = { lineItems }
-                products = { products }
-                updateOrder = { updateOrder }
-                removeFromCart = { removeFromCart }
-              />
-              <Orders
-                orders = { orders }
-                products = { products }
-                lineItems = { lineItems }
-              />
+              <Routes>
+                <Route path='/products/search/:term' element={
+                  <Products
+                    auth = { auth }
+                    products={ products }
+                    cartItems = { cartItems }
+                    createLineItem = { createLineItem }
+                    updateLineItem = { updateLineItem }
+                    updateProduct = { updateProduct }
+                  />
+                } />
+                <Route path='/products' element={
+                  <Products
+                    auth = { auth }
+                    products={ products }
+                    cartItems = { cartItems }
+                    createLineItem = { createLineItem }
+                    updateLineItem = { updateLineItem }
+                    updateProduct = { updateProduct }
+                  />
+                } />
+                <Route path='/cart' element={
+                  <Cart
+                    cart = { cart }
+                    lineItems = { lineItems }
+                    products = { products }
+                    updateOrder = { updateOrder }
+                    removeFromCart = { removeFromCart }
+                  />
+                } />
+                <Route path='/orders' element={
+                  <Orders
+                    orders = { orders }
+                    products = { products }
+                    lineItems = { lineItems }
+                  />
+                } />
+              </Routes>
             </main>
             </>
         ):(
           <div>
             <Login login={ login }/>
-            <Products
-              products={ products }
-              cartItems = { cartItems }
-              createLineItem = { createLineItem }
-              updateLineItem = { updateLineItem }
-              auth = { auth }
-            />
+            <Routes>
+              <Route path='/' element= {
+                <Products
+                  products={ products }
+                  cartItems = { cartItems }
+                  createLineItem = { createLineItem }
+                  updateLineItem = { updateLineItem }
+                  auth = { auth }
+                />
+              } />
+              <Route path='/products' element= {
+                <Products
+                  products={ products }
+                  cartItems = { cartItems }
+                  createLineItem = { createLineItem }
+                  updateLineItem = { updateLineItem }
+                  auth = { auth }
+                />
+              } />
+              <Route path='/products/search/:term' element= {
+                <Products
+                  products={ products }
+                  cartItems = { cartItems }
+                  createLineItem = { createLineItem }
+                  updateLineItem = { updateLineItem }
+                  auth = { auth }
+                />
+              } />
+            </Routes>
           </div>
         )
       }
