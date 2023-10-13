@@ -5,11 +5,13 @@ import Products from './Products';
 import Orders from './Orders';
 import Cart from './Cart';
 import Login from './Login';
+import Addresses from './Addresses';
 import api from './api';
 
 const App = ()=> {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [addresses, setAddresses] = useState([]);
   const [lineItems, setLineItems] = useState([]);
   const [auth, setAuth] = useState({});
   const el = useRef();
@@ -41,6 +43,15 @@ const App = ()=> {
   useEffect(()=> {
     if(auth.id){
       const fetchData = async()=> {
+        await api.fetchAddresses(setAddresses);
+      };
+      fetchData();
+    }
+  }, [auth]);
+
+  useEffect(()=> {
+    if(auth.id){
+      const fetchData = async()=> {
         await api.fetchLineItems(setLineItems);
       };
       fetchData();
@@ -58,6 +69,10 @@ const App = ()=> {
 
   const createLineItem = async(product)=> {
     await api.createLineItem({ product, cart, lineItems, setLineItems});
+  };
+
+  const createAddress = async(address)=> {
+    await api.createAddress({ address, setAddresses });
   };
 
   const updateLineItem = async(lineItem)=> {
@@ -94,7 +109,7 @@ const App = ()=> {
 
   return (
     <div>
-      <div ref={ el } style={{ height: '300px'}}/>
+      <div ref={ el } style={{ height: '30px'}}/>
       {
         auth.id ? (
           <>
@@ -102,6 +117,7 @@ const App = ()=> {
               <Link to='/products'>Products ({ products.length })</Link>
               <Link to='/orders'>Orders ({ orders.filter(order => !order.is_cart).length })</Link>
               <Link to='/cart'>Cart ({ cartCount })</Link>
+              <Link to='/addresses'>Addresses ({ addresses.length })</Link>
               <span>
                 Welcome { auth.username }!
                 <button onClick={ logout }>Logout</button>
@@ -109,6 +125,11 @@ const App = ()=> {
             </nav>
             <main>
               <Routes>
+                <Route path='/addresses' element={ 
+                    <Addresses createAddress={ createAddress } addresses={ addresses } />
+                  }
+                />
+                
                 <Route path='/products/search/:term' element={
                   <Products
                     auth = { auth }

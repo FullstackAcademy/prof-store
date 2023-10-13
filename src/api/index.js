@@ -18,6 +18,11 @@ const fetchOrders = async(setOrders)=> {
   setOrders(response.data);
 };
 
+const fetchAddresses = async(setAddresses)=> {
+  const response = await axios.get('/api/addresses', getHeaders());
+  setAddresses(response.data);
+};
+
 const fetchLineItems = async(setLineItems)=> {
   const response = await axios.get('/api/lineItems', getHeaders());
   setLineItems(response.data);
@@ -29,6 +34,11 @@ const createLineItem = async({ product, cart, lineItems, setLineItems })=> {
     product_id: product.id
   }, getHeaders());
   setLineItems([...lineItems, response.data]);
+};
+
+const createAddress = async({ address, setAddresses })=> {
+  const response = await axios.post('/api/addresses', address, getHeaders());
+  await fetchAddresses(setAddresses)
 };
 
 const updateLineItem = async({ lineItem, cart, lineItems, setLineItems })=> {
@@ -87,8 +97,10 @@ const api = {
   logout,
   fetchProducts,
   fetchOrders,
+  fetchAddresses,
   fetchLineItems,
   createLineItem,
+  createAddress,
   updateLineItem,
   updateProduct,
   updateOrder,

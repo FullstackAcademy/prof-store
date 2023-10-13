@@ -15,6 +15,11 @@ const {
 } = require('./auth');
 
 const {
+  createAddress,
+  fetchAddresses
+} = require('./address');
+
+const {
   fetchLineItems,
   createLineItem,
   updateLineItem,
@@ -41,6 +46,7 @@ const loadImage = (filePath)=> {
 
 const seed = async()=> {
   const SQL = `
+    DROP TABLE IF EXISTS addresses;
     DROP TABLE IF EXISTS line_items;
     DROP TABLE IF EXISTS products;
     DROP TABLE IF EXISTS orders;
@@ -59,6 +65,13 @@ const seed = async()=> {
       created_at TIMESTAMP DEFAULT now(),
       name VARCHAR(100) UNIQUE NOT NULL,
       image TEXT
+    );
+
+    CREATE TABLE addresses(
+      id UUID PRIMARY KEY,
+      created_at TIMESTAMP DEFAULT now(),
+      data JSON DEFAULT '{}',
+      user_id UUID REFERENCES users(id) NOT NULL
     );
 
     CREATE TABLE orders(
@@ -81,10 +94,12 @@ const seed = async()=> {
   await client.query(SQL);
 
   const [moe, lucy, ethyl] = await Promise.all([
-    createUser({ username: 'moe', password: 'm_password', is_admin: false}),
-    createUser({ username: 'lucy', password: 'l_password', is_admin: false}),
-    createUser({ username: 'ethyl', password: '1234', is_admin: true})
+    createUser({ username: 'moe', password: `${process.env.password_prefix}_moe`, is_admin: false}),
+    createUser({ username: 'lucy', password: `${process.env.password_prefix}_lucy`, is_admin: false}),
+    createUser({ username: 'ethyl', password: `${process.env.password_prefix}_ethyl`, is_admin: true})
   ]);
+  await createAddress({ user_id: moe.id, data: { formatted_address: 'earth'}});
+  await createAddress({ user_id: moe.id, data: { formatted_address: 'mars'}});
   const fooImage = await loadImage('images/foo.png');
   const barImage = await loadImage('images/bar.png');
   const bazzImage = await loadImage('images/bazz.png');
@@ -109,6 +124,8 @@ module.exports = {
   fetchProducts,
   fetchOrders,
   fetchLineItems,
+  fetchAddresses,
+  createAddress,
   createLineItem,
   updateLineItem,
   deleteLineItem,
