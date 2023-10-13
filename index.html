@@ -2,8 +2,10 @@
   <head>
     <title>The Store</title>
     <link rel='stylesheet' href='/assets/styles.css' />
+    <script>
+      window.GOOGLE_API_KEY = '<%= GOOGLE_API %>';
+    </script>
     <script defer src='/dist/main.js'></script>
-    <script defer src="https://maps.googleapis.com/maps/api/js?key=<%= GOOGLE_API %>&libraries=places"></script>
   </head>
   <body>
     <div id='root'></div>

@@ -1,22 +1,30 @@
 import React, { useRef, useEffect } from 'react';
+import { Loader } from "@googlemaps/js-api-loader"
 
 const Addresses = ({ addresses, createAddress })=> {
   const el = useRef();
   useEffect(()=> {
-    const options = {
-      fields: [
-        'formatted_address',
-        'geometry'
-      ]
-    };
-    const autocomplete = new google.maps.places.Autocomplete(el.current, options);
-    autocomplete.addListener('place_changed', async()=> {
-      const place = autocomplete.getPlace();
-      const address = { data: place };
-      await createAddress(address); 
-      el.current.value = '';
-    });
-
+    const setup = async()=> {
+      const loader = new Loader({
+        apiKey: window.GOOGLE_API_KEY,
+      });
+     await loader.load();
+     const { Autocomplete } = await google.maps.importLibrary("places");
+      const options = {
+        fields: [
+          'formatted_address',
+          'geometry'
+        ]
+      };
+      const autocomplete = new Autocomplete(el.current, options);
+      autocomplete.addListener('place_changed', async()=> {
+        const place = autocomplete.getPlace();
+        const address = { data: place };
+        await createAddress(address); 
+        el.current.value = '';
+      });
+    }
+    setup();
   }, []);
   return (
     <div>

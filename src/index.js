@@ -6,6 +6,7 @@ import Orders from './Orders';
 import Cart from './Cart';
 import Login from './Login';
 import Addresses from './Addresses';
+import { Loader } from "@googlemaps/js-api-loader"
 import api from './api';
 
 const App = ()=> {
@@ -59,13 +60,20 @@ const App = ()=> {
   }, [auth]);
 
   useEffect(()=> {
-    const map = new google.maps.Map(el.current, {
-      center: { lat: 40.749933, lng: -73.98633 },
-      zoom: 13,
-      mapTypeControl: false,
-    });
+    const setup = async()=> {
+      const loader = new Loader({
+        apiKey: window.GOOGLE_API_KEY,
+      });
+     await loader.load();
+     const { Map } = await google.maps.importLibrary("places");
+      const map = new google.maps.Map(el.current, {
+        center: { lat: 40.749933, lng: -73.98633 },
+        zoom: 13,
+        mapTypeControl: false,
+      });
+    }
+    setup();
   }, []);
-
 
   const createLineItem = async(product)=> {
     await api.createLineItem({ product, cart, lineItems, setLineItems});
