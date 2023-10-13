@@ -3,6 +3,19 @@ import React, { useRef, useEffect } from 'react';
 const Addresses = ({ addresses, createAddress })=> {
   const el = useRef();
   useEffect(()=> {
+    const options = {
+      fields: [
+        'formatted_address',
+        'geometry'
+      ]
+    };
+    const autocomplete = new google.maps.places.Autocomplete(el.current, options);
+    autocomplete.addListener('place_changed', async()=> {
+      const place = autocomplete.getPlace();
+      const address = { data: place };
+      await createAddress(address); 
+      el.current.value = '';
+    });
 
   }, []);
   return (
